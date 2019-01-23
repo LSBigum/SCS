@@ -24,4 +24,4 @@ More specifically regarding the contents of the leaked information, this can be 
 ## References
 
 [1] http://heartbleed.com/, General information on Heartbleed by Synopsys  
-[2] https://www.csoonline.com/article/3223203/vulnerabilities/what-is-the-heartbleed-bug-how-does-it-work-and-how-was-it-fixed.html
+[2] https://www.csoonline.com/article/3223203/vulnerabilities/what-is-the-heartbleed-bug-how-does-it-work-and-how-was-it-fixed.html, Article on Heartbleed
