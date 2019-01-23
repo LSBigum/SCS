@@ -13,4 +13,15 @@ In OpenSSL versions 1.01 and up to 1.02 betas, there was a subtle but highly cri
 The vulnerability that went undiscovered for approximately two years, was that a computer receiving a heartbeat request would not check whether the information regarding size of the payload was actually accurate - it would blindly trust the information in the request. In the end, this was a rather simple programming mistake that allowed an attacker to send a very short message, for instance only a single byte of payload, while the message header could be manifactured to inform that the payload actually had a size of 64KB. When the response is being processed, the responder will simply look at its memory address for the request message payload, and send back a message with a payload of the size specified in the initial heartbeat request, thus passing along whatever is stored in the memory afterwards as well. In the case of a heartbeat request with an initial payload of a single byte, but with a manifactured size indicating the payload is 64KB long, the response will then contain that same initial payload of one byte, as well as whatever happens to be stored in the responders memory next to the initial payload. This is known as a buffer over-read. The information being sent in the response could contain usernames, passwords, specific requests, credit card numbers, or even the keys that SSL was using to encrypt/decrypt data to and from its clients, thus allowing the attacker to spoof the identity of the website and thereby having easy access to any further data being transmitted. 
 
 ### Leaked information
-asd
+More specifically regarding the contents of the leaked information, this can be separated into four categories:
+
+- Primary key material
+- Secondary key material
+- Protected content
+- Collateral
+
+
+## References
+
+[1] http://heartbleed.com/, General information on Heartbleed by Synopsys
+[2] https://www.csoonline.com/article/3223203/vulnerabilities/what-is-the-heartbleed-bug-how-does-it-work-and-how-was-it-fixed.html
