@@ -6,7 +6,7 @@ In 2014 a devastating security vulnerability was discovered in the OpenSSL imple
 
 ## The Heartbeat extension
 
-In OpenSSL versions 1.01 and up to 1.02 betas, there was a subtle but highly critical programming mistake that could lead to an attacker being able to gain access to the otherwise encrypted data. A system running one of the aforementioned versions of the OpenSSL implementation can be attacked quite easily. In particular, there's an extension to the TLS protocol known as Heartbeat. The Heartbeat allows you to keep a TLS session running even though no data has been communicated in a while, simply by sending a special message known as a heartbeat request. Before the introduction of Heartbeat, if there was a period without any communication between a client and server, the TLS session might have been terminated and would have to be reopened if any further data transfer was required. Heartbeat can also be used to check if the receiver of the signal is still present, and in that way keep the line of communication alive. The request itself consists of a payload containing the actual message, as well as some explicit information that specifies the size of the payload. When the server receives the heartbeat request, it allocates a memory buffer according to the size specified in request message header, and stores the payload there. The response from the server will then be constructed by passing on the contents from the beginning of the buffer until the length specified in the heartbeat request.  
+In OpenSSL versions 1.01 up to 1.01g, there was a subtle but highly critical programming mistake that could lead to an attacker being able to gain access to the otherwise encrypted data. A system running one of the aforementioned versions of the OpenSSL implementation can be attacked quite easily. In particular, there's an extension to the TLS protocol known as Heartbeat. The Heartbeat allows you to keep a TLS session running even though no data has been communicated in a while, simply by sending a special message known as a heartbeat request. Before the introduction of Heartbeat, if there was a period without any communication between a client and server, the TLS session might have been terminated and would have to be reopened if any further data transfer was required. Heartbeat can also be used to check if the receiver of the signal is still present, and in that way keep the line of communication alive. The request itself consists of a payload containing the actual message, as well as some explicit information that specifies the size of the payload. When the server receives the heartbeat request, it allocates a memory buffer according to the size specified in request message header, and stores the payload there. The response from the server will then be constructed by passing on the contents from the beginning of the buffer until the length specified in the heartbeat request.  
 
 ## Heartbleed bug
 
@@ -23,7 +23,7 @@ The implementation flaw that is the cause of Heartbleed can be seen in one line 
 This takes a pointer to the source of the payload (`pl`) and copies the amount of bytes specified by `payload`, and stores that at `bp`. The destination memory gets allocated in a place where the data is allowed to be overwritten. When a response has to be sent, whatever data that has not been overwritten and is still within the allocated memory will be sent to the requester. 
 
 ### Leaked information
-The contents of the leaked information can be separated into four categories[1]:
+The contents of the leaked information can be separated into four categories[1][3]:
 
 - *Primary key material*  
 These are the keys used to encrypt the data being transmitted. Obtaining these will allow the attacker to spoof the identity of the website itself, making it easy to intercept future communication. Any previously intercepted communication encrypted with the same keys can also be decrypted. In order to rectify this, the owner of the service is required to retract the compromised keys and release new keys. 
@@ -38,6 +38,33 @@ This covers memory addresses and other protective measures that can only be used
 Below is an example of a maliciously crafted heartbeat request to a server. This example didn't return any sensitive information, but could easily have done so - it would only be a matter of time before it did.
 ![alt text](https://i.imgur.com/3aSQUel.png "An example of a maliciously crafted heartbeat request to a server. This example didn't return any sensitive information, but could easily have done so.")
 
+## Heartbleed fix
+
+The fix itself was rather simple. First of all, a check is made to see if the heartbeat request is larger than 0KB. Next, the code checks if the payload size is actually bigger than advertised. The code can be seen here:
+
+`* Read type and payload length first */
+
+if (1 + 2 + 16 > s->s3->relent)
+
+return 0;
+
+/* silently discard */
+
+hbtype = *p++;
+
+n2s(p, payload);
+
+if (1 + 2 + payload + 16 > s->s3->rrec.length)
+
+return 0;
+
+/* silently discard per RFC 6520 sec. 4 */
+
+pl = p;`
+
+One of the primary reasons to use an open-source implementation for security, is that anyone can look at the source code and find potential mistakes in order to get them fixed quickly. That notion falls apart, however, when no one is actually taking their time to do just that. Steve Marquess, the organisations president, said: 
+
+"So the mystery is not that a few overworked volunteers missed this bug; the mystery is why it hasn’t happened more often."[6]
 
 ## References
 
@@ -46,3 +73,4 @@ Below is an example of a maliciously crafted heartbeat request to a server. This
 [3] http://research.njms.rutgers.edu/m/it/Publications/docs/Heartbleed_OpenSSL_Vulnerability_a_Forensic_Case_Study_at_Medical_School.pdf, Heartbleed OpenSSL Vulnerability: a Forensic Case Study at Medical School  
 [4] https://gizmodo.com/how-heartbleed-works-the-code-behind-the-internets-se-1561341209, How Heartbleed Works: The Code Behind the Internet's Security Nightmare  
 [5] http://www.cplusplus.com/reference/cstring/memcpy/, Cplusplus: memcpy
+[6] http://veridicalsystems.com/blog/of-money-responsibility-and-pride/, Of Money, Responsibility, and Pride
