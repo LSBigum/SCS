@@ -16,12 +16,19 @@ The vulnerability that went undiscovered for approximately two years, was that a
 The contents of the leaked information can be separated into four categories[1]:
 
 - Primary key material
+These are the keys used to encrypt the data being transmitted. Obtaining these will allow the attacker to spoof the identity of the website itself, making it easy to intercept future communication. Any previously intercepted communication encrypted with the same keys can also be decrypted. In order to rectify this, the owner of the service is required to retract the compromised keys and release new keys. 
 - Secondary key material
+This refers to user names and passwords to the site itself. The users will need to change their login information to secure themselves in the future.
 - Protected content
+This category encompasses personal and financial information, messages, documents - anything sensitive that would require encryption.
 - Collateral
+This covers memory addresses and other protective measures that can only be used temporarily, and thus they will become obsolete with new updates to the OpenSSL. 
+
 
 
 ## References
 
 [1] http://heartbleed.com/, General information on Heartbleed by Synopsys  
-[2] https://www.csoonline.com/article/3223203/vulnerabilities/what-is-the-heartbleed-bug-how-does-it-work-and-how-was-it-fixed.html, Article on Heartbleed
+[2] https://www.csoonline.com/article/3223203/vulnerabilities/what-is-the-heartbleed-bug-how-does-it-work-and-how-was-it-fixed.html, What is the heartbleed bug, how does it work, and how was it fixed?
+[3] http://research.njms.rutgers.edu/m/it/Publications/docs/Heartbleed_OpenSSL_Vulnerability_a_Forensic_Case_Study_at_Medical_School.pdf, Heartbleed OpenSSL Vulnerability: a Forensic Case Study at Medical School
+
