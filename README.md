@@ -34,6 +34,8 @@ This category encompasses personal and financial information, messages, document
 - *Collateral*
 This covers memory addresses and other protective measures that can only be used temporarily, and thus they will become obsolete with new updates to the OpenSSL. 
 
+
+Below is an example of a maliciously crafted heartbeat request to a server. This example didn't return any sensitive information, but could easily have done so - it would only be a matter of time before it did.
 ![alt text](https://i.imgur.com/3aSQUel.png "An example of a maliciously crafted heartbeat request to a server. This example didn't return any sensitive information, but could easily have done so.")
 
 
