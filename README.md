@@ -20,7 +20,7 @@ The implementation flaw that is the cause of Heartbleed can be seen in one line 
 
 `memcpy(bp, pl, payload);`
 
-This takes a pointer to the source of the payload (`pl`) and copies the amount of bytes specified by `payload`, and stores that at `bp`. The destination memory gets allocated in a place where the data is allowed to be overwritten. 
+This takes a pointer to the source of the payload (`pl`) and copies the amount of bytes specified by `payload`, and stores that at `bp`. The destination memory gets allocated in a place where the data is allowed to be overwritten. When a response has to be sent, whatever data that has not been overwritten and is still within the allocated memory will be sent to the requester. 
 
 ### Leaked information
 The contents of the leaked information can be separated into four categories[1]:
@@ -34,6 +34,7 @@ This category encompasses personal and financial information, messages, document
 - *Collateral*
 This covers memory addresses and other protective measures that can only be used temporarily, and thus they will become obsolete with new updates to the OpenSSL. 
 
+![alt text](https://i.imgur.com/3aSQUel.png "An example of a maliciously crafted heartbeat request to a server. This example didn't return any sensitive information, but could easily have done so."
 
 
 ## References
