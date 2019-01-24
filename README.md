@@ -42,7 +42,8 @@ Below is an example of a maliciously crafted heartbeat request to a server. This
 
 The fix itself was rather simple. First of all, a check is made to see if the heartbeat request is larger than 0KB. Next, the code checks if the payload size is actually bigger than advertised. The code can be seen here:
 
-`* Read type and payload length first */
+```
+* Read type and payload length first */
 if (1 + 2 + 16 > s->s3->relent)
 return 0;
 /* silently discard */
@@ -51,7 +52,8 @@ n2s(p, payload);
 if (1 + 2 + payload + 16 > s->s3->rrec.length)
 return 0;
 /* silently discard per RFC 6520 sec. 4 */
-pl = p;`
+pl = p;
+```
 
 One of the primary reasons to use an open-source implementation for security, is that anyone can look at the source code and find potential mistakes in order to get them fixed quickly. That notion falls apart, however, when no one is actually taking their time to do just that. Steve Marquess, the organisations president, said: 
 
